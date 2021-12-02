@@ -135,6 +135,7 @@ macro_rules! poll_broadcast_fut {
                 tracing::info!(
                     tx_hash = ?*pending,
                     escalation = $this.sent.len(),
+                    kek = "\n\nKEK\n\n",
                     "Escalation transaction broadcast complete"
                 );
                 println!("\n\n\nKEK\n\n\n");
