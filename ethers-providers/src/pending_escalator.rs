@@ -135,23 +135,22 @@ macro_rules! poll_broadcast_fut {
                 tracing::info!(
                     tx_hash = ?*pending,
                     escalation = $this.sent.len(),
-                    kek = "\n\nKEK\n\n",
                     "Escalation transaction broadcast complete"
                 );
-                println!("\n\n\nKEK\n\n\n");
                 check_all_receipts!($cx, $this);
             }
             Poll::Ready(Err(e)) => {
                 // kludge. Prevents erroring on "nonce too low" which indicates
                 // a previous escalation confirmed during this broadcast attempt
-                println!("\n\n\n{}\n---\n{:?}\n\n\n", e, e);
+                tracing::info!(
+                    error_display = %e,
+                    error_debug = ?e,
+                    "Want to see the diffrernce for error"
+                );
                 if format!("{}", e).contains("nonce too low") {
-                    println!("\n\n\nNONCE TOO LOW CAPTURED!\n\n\n");
 
                     check_all_receipts!($cx, $this);
                 } else {
-                    println!("\n\n\n ERROR CAPTURED!\n\n\n");
-
                     tracing::error!(
                         error = ?e,
                         "Error during transaction broadcast"
