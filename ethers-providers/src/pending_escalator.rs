@@ -142,9 +142,11 @@ macro_rules! poll_broadcast_fut {
             Poll::Ready(Err(e)) => {
                 // kludge. Prevents erroring on "nonce too low" which indicates
                 // a previous escalation confirmed during this broadcast attempt
-                if format!("{}", e).contains("nonce too low") {
+                if format!("{:?}", e).contains("nonce too low") {
+                    println!("\n\n\nNONCE TOO LOW CAPTURED!\n\n\n");
                     check_all_receipts!($cx, $this);
                 } else {
+                    println!("\n\n\n ERROR CAPTURED!\n\n\n");
                     tracing::error!(
                         error = ?e,
                         "Error during transaction broadcast"
@@ -187,7 +189,7 @@ where
                         let fut = this.provider.send_raw_transaction(next_to_broadcast);
                         *this.state = BroadcastingNew(fut);
                         cx.waker().wake_by_ref();
-                        return Poll::Pending
+                        return Poll::Pending;
                     }
                 }
                 check_all_receipts!(cx, this);
