@@ -70,7 +70,12 @@ impl JsonRpcClient for Provider {
     ) -> Result<R, ClientError> {
         let next_id = self.id.fetch_add(1, Ordering::SeqCst);
 
-        println!("\n\nMMM-> {} {}\n\n", method, serde_json::to_string(&params).unwrap());
+        println!(
+            "\n\nMMM-> {} {} {}\n\n",
+            next_id,
+            method,
+            serde_json::to_string(&params).unwrap()
+        );
 
         let payload = Request::new(next_id, method, params);
 
